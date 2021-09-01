@@ -1,0 +1,5 @@
+[
+    {"title":"Nike sb","price":10000 ,"thumbnail":"https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/g16thmfkapl730glqgxh/calzado-de-skateboarding-sb-zoom-stefan-janoski-canvas-rm-qfDpRn.png"},
+    {"title":"Adidas","price":9000 ,"thumbnail":"https://assets.adidas.com/images/w_600,f_auto,q_auto/7ed0855435194229a525aad6009a0497_9366/Zapatillas_Superstar_Blanco_EG4958_01_standard.jpg"},
+    {"title":"New Balance","price":9800 ,"thumbnail":"https://capaccionideportes.com.ar/29033-large_default/nb-327.jpg"}
+]
