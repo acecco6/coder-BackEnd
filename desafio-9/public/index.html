@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Cargar Productos</title>
+    
+</head>
+<body>
+    <form class="form" method="POST" action="/api/productos/guardar">
+        <h2>Cargar Producto</h2>
+        <p type="Title:"><input type="text" name="Title" placeholder="Ingrese el Title"></input></p>
+        <p type="Price:"><input type="number" name="Price" placeholder="Ingrese el Price"></input></p>
+        <p type="Thumbnail:"><input type="text" name="Thumbnail" placeholder="Ingrese el Thumbnail"></input></p>
+        <button type="submit">Cargar Producto</button>
+      </form>
+</body>
+</html>
