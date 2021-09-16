@@ -1,0 +1,30 @@
+{{#if active}}
+<br>
+<div class="container">
+	<div class="row">
+		<table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Thumbnail</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each item}}
+                    <tr>
+                    <td>{{this.Title}}</td>
+                    <td>{{this.Price}}</td>
+                    <td><img height="50px" width="50px" style="object-fit: cover;" src="{{this.Thumbnail}}" /></td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+	</div>
+</div>
+
+{{else}}
+<div class="alert alert-primary" role="alert">
+  {{item}}
+</div>
+{{/if}}
