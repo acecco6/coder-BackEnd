@@ -50,7 +50,7 @@ routerProducto.get("/",(req,res)=>{
 // Listar Productos
 routerProducto.get("/listar/:id",(req,res)=>{
     let producto=Productos.find(e=>e.id==req.params.id)
-    res.send(producto)
+    res.json(producto)
 })
 
 // Agregar Productos
@@ -62,10 +62,10 @@ routerProducto.post("/agregar",(req,res)=>{
         producto.timestamp=GetDate()
         producto.id=id
         Productos.push(producto)
-        res.send(producto)  
+        res.json(producto)  
         
     }else{
-        res.send({error:-1,descripcion:"ruta '/productos/agregar' metodo 'access' error  "})
+        res.json({error:-1,descripcion:"ruta '/productos/agregar' metodo 'access' error  "})
     }
 })
 
@@ -85,7 +85,7 @@ routerProducto.put("/actualizar/:id",(req,res)=>{
             }
         }
     }else{
-        res.send({error:-1,descripcion:"ruta '/actualizar/:id' metodo 'access' error  "})
+        res.json({error:-1,descripcion:"ruta '/actualizar/:id' metodo 'access' error  "})
     }
 })
 
@@ -93,7 +93,7 @@ routerProducto.put("/actualizar/:id",(req,res)=>{
 routerProducto.delete("/borrar/:id",(req,res)=>{
     if (Administrador) {
         Productos=Productos.filter(e=>e.id != req.params.id)    
-        res.send(Productos)
+        res.json(Productos)
     }else{
         res.send({error:-1,descripcion:"ruta '/borrar/:id' metodo 'access' error"})
     }
@@ -103,11 +103,20 @@ routerProducto.delete("/borrar/:id",(req,res)=>{
 
 
 // Rutas Carritos
-// Listar Productos Carrito
+
+routerCarrito.get("/",(req,res)=>{
+    if (Carrito.length>0) {
+        res.json(Carrito)   
+    }else{
+        res.send("No hay Producto en el Carrito")
+    }
+})
+
+// Listar Productos Carrito id
 routerCarrito.get("/listar/:id",(req,res)=>{
     if (Carrito.length>0) {
         let producto=Carrito.filter(e=>e.id==req.params.id)
-        res.send(producto)   
+        res.json(producto)   
     }else{
         res.send("No hay Producto en el Carrito")
     }
@@ -120,7 +129,7 @@ routerCarrito.post("/agregar/:id_producto",(req,res)=>{
         if (producto.id==req.params.id_producto) {
             let item={id:idCarrito,timestamp:GetDate(),producto:producto}
             Carrito.push(item)
-            res.send(Carrito)
+            res.json(Carrito)
         }
     }
 })
@@ -129,5 +138,5 @@ routerCarrito.post("/agregar/:id_producto",(req,res)=>{
 // Borrar Productos Carrito
 routerCarrito.delete("/borrar/:id",(req,res)=>{
     Carrito=Carrito.filter(e=>e.id !=req.params.id)
-    res.send(Carrito)
+    res.json(Carrito)
 })
