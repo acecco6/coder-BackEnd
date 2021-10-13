@@ -1,24 +1,17 @@
 const express=require("express") 
 const fs=require("fs") 
 
-// Productos var
+// Productos BD
 const {ProductosBD} = require("./Config/ConnectDB")
-const knex=require("knex")(ProductosBD)
-
-
+const ProductoDBI=require("knex")(ProductosBD)
+// Mensajes BD
+const {MensajesBD}=require("./DB/ConnectMSG")
+const MensajesBDI=require("knex")(MensajesBD)
 
 const app=express()
 const http=require("http").Server(app)
 const io = require("socket.io")(http)
 
-var mensaje=[]
-const backup = fs.readFileSync('./archivo.txt','utf-8');
-let backupDatos=JSON.parse(backup)
-if (backupDatos.length >0) {
-    for (const it of backupDatos) {
-        mensaje.push(it)  
-    }
-}
 
 
 const port=process.env.PORT || 3030
@@ -38,20 +31,14 @@ api.use(express.urlencoded({extended: true}));
 app.set('views', './views');
 app.set('view engine', 'pug');
 
-// Activar Servers
-// const server=app.listen(port,()=>{
-//     console.log(`Servidor ${server.address().port}`)
-// })
-// server.on("error",error=>console.log("Error en el Servidor",error))
-
-
 http.listen(3030,()=>{
     console.log("Puerto 3030 Active")
 })
+
 // SocketIo Conexion
 io.on("connection",(socket)=>{
     console.log("Usuario Conectado")
-    knex.select("id","nombre","precio","foto").from('item')
+    ProductoDBI.select("id","nombre","precio","foto").from('item')
         .then(e=>{
             let productos=[]
             for (const product of e) {
@@ -60,17 +47,28 @@ io.on("connection",(socket)=>{
             socket.emit("items",productos)
         })
         .catch(()=>{
-            knex.destroy()
+            ProductoDBI.destroy()
         })
     
-    socket.emit("returnMSG",mensaje)
-
+    MensajesBDI.from('mensaje').select("*")
+    .then(e=>{
+        let mensaje=[]
+            for (const msg of e) {
+                mensaje.push({idUsuario:msg["idUsuario"],nombre:msg["nombre"],mail:msg["mail"],text:msg["text"],date:msg["date"],hora:msg["hora"]})
+            }
+        socket.emit("returnMSG",mensaje)
+    })
+    .catch(e=>{
+        console.log(e)
+    })
     socket.on("item",(dato)=>{
         
-        knex.insert({nombre:dato.Title,precio:dato.Price,foto:dato.Thumbnail}).into("item")
+        ProductoDBI.insert({
+            nombre:dato.Title,
+            precio:dato.Price,
+            foto:dato.Thumbnail}).into("item")
         .then(()=>{
-            // knex.destroy();
-            knex.select("id","nombre","precio","foto").from('item')
+            ProductoDBI.select("id","nombre","precio","foto").from('item')
             .then(e=>{
                 let productos=[]
                 for (const product of e) {
@@ -80,32 +78,41 @@ io.on("connection",(socket)=>{
             })
         })
         .catch(()=>{
-            knex.destroy()
+            ProductoDBI.destroy()
         })
     })
     
     socket.on("MSGDatos",(dato)=>{
-        mensaje.push(dato)
-        fs.writeFileSync("./archivo.txt",JSON.stringify(mensaje),'utf-8')
-        io.sockets.emit("returnMSG",mensaje)
+        MensajesBDI.insert({
+            idUsuario:dato.idUsuario,
+            nombre:dato.nombre,
+            mail:dato.mail,
+            text:dato.text,
+            date:dato.date,
+            hora:dato.hora}).into("mensaje")
+        .then(()=>{
+            MensajesBDI.from('mensaje').select("*")
+            .then(e=>{
+                let mensaje=[]
+                    for (const msg of e) {
+                        mensaje.push({idUsuario:msg["idUsuario"],nombre:msg["nombre"],mail:msg["mail"],text:msg["text"],date:msg["date"],hora:msg["hora"]})
+                    }
+                io.sockets.emit("returnMSG",mensaje)
+            })
+            .catch(e=>{
+                console.log(e)
+            })
+        })
+        .catch(e=>console.log(e))
     })
 })
 
 
-// Declaracion Rutas
-// app.get("/productos/vista",(req,res)=>{
-//     if (productos.length==0) {
-//         res.render('index.pug', { item: "No hay productos" ,active:false});
-//     }else{
-//         res.render('index.pug', { item: productos,active:true});
-//     }
-// })
-
 api.get("/productos",(req,res)=>{
     let productos=[]
-    knex.select("id","nombre","precio","foto").from('item')
+    ProductoDBI.select("id","nombre","precio","foto").from('item')
         .then(e=>{
-            // knex.destroy()
+            // ProductoDBI.destroy()
             for (const product of e) {
                 productos.push({Title:product["nombre"],Price:product["precio"],Thumbnail:product["foto"]})
             }
@@ -117,13 +124,13 @@ api.get("/productos",(req,res)=>{
             
         })
         .catch(()=>{
-            knex.destroy()
+            ProductoDBI.destroy()
         })
 })
 
 api.get("/productos/:id",(req,res)=>{
     const {id}=req.params
-    knex('item').where('id',id)
+    ProductoDBI('item').where('id',id)
     .then((e)=>{
         let productos=e
         if (productos.length!=0) {
@@ -139,7 +146,7 @@ api.get("/productos/:id",(req,res)=>{
 api.post("/productos/guardar",(req,res)=>{
     let dato=req.body
     console.log(dato.Title)
-    knex.insert({nombre:dato.Title,precio:dato.Price,foto:dato.Thumbnail}).into("item")
+    ProductoDBI.insert({nombre:dato.Title,precio:dato.Price,foto:dato.Thumbnail}).into("item")
         .then(()=>{
             console.log('Filas insertadas!');  
         })   
@@ -149,17 +156,17 @@ api.post("/productos/guardar",(req,res)=>{
 api.put("/productos/actualizar/:id",(req,res)=>{
     const {id}=req.params
     const {Title,Price,Thumbnail}=req.body
-    knex('item').where('id',id)
+    ProductoDBI('item').where('id',id)
     .then((e)=>{
         let productos=e
         if (productos.length!=0) {
-            knex.from('item').where('id','=',id).update({nombre:Title,precio:Price,foto:Thumbnail})
+            ProductoDBI.from('item').where('id','=',id).update({nombre:Title,precio:Price,foto:Thumbnail})
             .then(() => {
                 console.log('Filas actualizadas!')
             })
             .catch(e=>{
                 console.log('Error en Update:', e);
-                knex.destroy();
+                ProductoDBI.destroy();
             })
         res.json(req.body)
         
@@ -172,13 +179,13 @@ api.put("/productos/actualizar/:id",(req,res)=>{
 
 api.delete("/productos/borrar/:id",(req,res)=>{
     let {id}=req.params
-    knex.from('item').where('id', '=', id).del()
+    ProductoDBI.from('item').where('id', '=', id).del()
     .then(() => {
         res.json({mensaje:"Borrado Exitoso"})
     })
     .catch(e=>{
         console.log('Error en Delete:', e);
-        knex.destroy();
+        ProductoDBI.destroy();
     });
     
     
