@@ -1,4 +1,4 @@
-const  ProductosBD= require('knex')({
+const  ProductosBD={
   client: 'mysql',
   connection: {
     host : '127.0.0.1',
@@ -6,9 +6,9 @@ const  ProductosBD= require('knex')({
     user : 'root',
     password : '',
     database : 'productos'
-  },
-  pool: { min: 0, max: 7 }
-})
+  }
+}
+
 module.exports={
   ProductosBD
 }
