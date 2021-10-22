@@ -8,9 +8,9 @@ function enviar(){
     if (Title.value.length >0 && Price.value.length >0 && Thumbnail.value.length >0 ) {
         let item={Title:Title.value,Price:Price.value,Thumbnail:Thumbnail.value}
         socket.emit("item",item)
-        // Title.value=""
-        // Price.value=""
-        // Thumbnail.value=""
+        Title.value=""
+        Price.value=""
+        Thumbnail.value=""
         return false
     }
     return false

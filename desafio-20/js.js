@@ -35,10 +35,11 @@ http.listen(3030,()=>{
 io.on("connection",(socket)=>{
     console.log("Usuario Conectado")
     getProductos().then(e=>{
+        console.log(e)
         let productos=[]
-            for (const product of e) {
-                productos.push({Title:product["nombre"],Price:product["precio"],Thumbnail:product["foto"]})
-            }
+        for (const product of e) {
+            productos.push({Title:product.Title,Price:product.Price,Thumbnail:product.foto})
+        }
         socket.emit("items",productos)
     })
     MensajesBDI.from('mensaje').select("*")
@@ -53,7 +54,16 @@ io.on("connection",(socket)=>{
         console.log(e)
     })
     socket.on("item",(dato)=>{
-        insertProductos(dato.Title,dato.Price,dato.Thumbnail).then( io.sockets.emit("items",productos))
+        insertProductos(dato.Title,dato.Price,dato.Thumbnail).then(()=>{
+            getProductos().then(e=>{
+                console.log(e)
+                let productos=[]
+                for (const product of e) {
+                    productos.push({Title:product.Title,Price:product.Price,Thumbnail:product.foto})
+                }
+                io.sockets.emit("items",productos)
+            })
+        })
     })
     
     socket.on("MSGDatos",(dato)=>{
