@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "firebase-admin": "^10.0.0",
+    "http-errors": "^1.8.0",
+    "knex": "^0.95.11",
+    "mariadb": "^2.5.5",
+    "mongoose": "^6.0.12",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.13",
+    "sqlite3": "^5.0.2",
+    "uuid": "^8.3.2",
+    "validator": "^13.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "set HOST=localhost&& set PORT=8080&& node server.js",
+    "start": "nodemon server.js"
+  }
+}
