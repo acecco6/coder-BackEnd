@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mis productos</title>
+    <script src="./socket.io/socket.io.js"></script>
+    <script src="./main.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+    <form action="/login" method="post" style="margin:20px;">
+        <h1 class="display-4" style="margin:20px">Login</h1>
+        <div class="input-field">
+            <input type="text" name="username"  placeholder="Enter Username" class="input-group input-group-sm mb-3" style="width:250px">
+        </div>
+    
+        <input type="submit" value="Log In" class="btn btn-success">
+    </form>
+ 
+    <h1 class="display-4" style="margin:20px">Centro de Mensajes</h1>
+      <div id='messages' style="margin:20px;"></div>
+      <form onsubmit="return envioMensaje(this)" style="margin:20px;">
+        E-mail:<input type="text" placeholder="Ingrese su email..." id="mail" class="input-group input-group-sm mb-3" style="width:250px">
+        Mensaje: <input type="text" placeholder="Su mensaje..." id="mensaje" class="input-group input-group-sm mb-3" style="width:250px">
+        <input type="submit" class="btn btn-success">
+    </form>
+
+  
+</body>
+</html>
